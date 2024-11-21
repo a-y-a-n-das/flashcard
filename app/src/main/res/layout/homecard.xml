@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <!-- Dynamic TextView overlayed over the vector asset -->
+
+    <ImageButton
+        android:id="@+id/nextButton"
+        android:layout_width="371dp"
+        android:layout_height="123dp"
+        android:onClick="next"
+        android:background="@drawable/c1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/titleText"
+        android:layout_width="254dp"
+        android:layout_height="22dp"
+        android:layout_marginBottom="48dp"
+        android:paddingStart="9dp"
+        android:text="Review 15 flashcards"
+        android:textStyle="bold"
+        android:textAlignment="viewStart"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/nextButton"
+        app:layout_constraintEnd_toEndOf="@+id/nextButton"
+        app:layout_constraintHorizontal_bias="0.034"
+        app:layout_constraintStart_toStartOf="@+id/nextButton" />
+
+    <TextView
+        android:id="@+id/categoryText"
+        android:layout_width="254dp"
+        android:layout_height="22dp"
+        android:layout_marginBottom="24dp"
+        android:paddingStart="9dp"
+        android:text="in Biology"
+        android:textStyle="italic"
+        android:textAlignment="viewStart"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/nextButton"
+        app:layout_constraintEnd_toEndOf="@+id/nextButton"
+        app:layout_constraintHorizontal_bias="0.034"
+        app:layout_constraintStart_toStartOf="@+id/nextButton" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
