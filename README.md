@@ -28,6 +28,8 @@ A simple flashcard application designed to help users study and memorize content
 - **Room Database**: Local database for storing flashcards and categories.
 - **Coroutines**: Used for asynchronous operations.
 - **ViewPager2**: For sliding between flashcards during reviews.
+- **RecyclerView**: For displaying categories and flashcards in a list/grid view.
+- **TypeConverters**: For converting complex data types like `LocalDate` into storable values in the Room database.
 
 ## Getting Started
 
