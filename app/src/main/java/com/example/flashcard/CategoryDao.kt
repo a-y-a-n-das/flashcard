@@ -1,21 +1,30 @@
 package com.example.flashcard
+
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-
-@Entity(tableName = "categories")
-data class Category(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val name: String
-)
+import androidx.room.Upsert
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CategoryDao {
-    @Insert
-    suspend fun insertCategory(category: Category)
+
+    @Upsert
+    suspend fun upsertCategory(category: Category)
+
+    @Delete
+    suspend fun deleteCategory(category: Category)
 
     @Query("SELECT * FROM categories")
-    suspend fun getAllCategories(): List<Category>
+    fun getAllCategories(): Flow<List<Category>>  // Changed to return Flow<List<Category>>
+
+    @Query("SELECT categoryId FROM categories WHERE categoryName = :categoryName")
+    suspend fun getCategoryId(categoryName: String): Int?
+
+    @Query("SELECT categoryName FROM categories WHERE categoryId = :categoryId")
+    suspend fun getCategoryName(categoryId: Int): String?
+
+    @Insert
+    suspend fun insertAllCategories(categories: List<Category>)  // Insert a list of categories
 }

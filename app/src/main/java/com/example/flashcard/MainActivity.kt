@@ -8,40 +8,56 @@ import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import android.content.res.ColorStateList
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
+
+import com.example.flashcard.HomeCategoryAdapter
+import kotlinx.coroutines.launch
 
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var categoryAdapter: HomeCategoryAdapter
+    private lateinit var categoryRecyclerView: RecyclerView
+    private lateinit var database: AppDatabase
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val categories = listOf("Category 1", "Category 2", "Category 3")
+        database = AppDatabase.getInstance(this)
 
-        val recyclerView = findViewById<RecyclerView>(R.id.reviewCardList)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = CategoryAdapter(categories)
-        val imageButton:ImageButton = findViewById(R.id.acc)
+        // Initialize RecyclerView
+        categoryRecyclerView = findViewById(R.id.reviewCardList)
+        categoryRecyclerView.layoutManager = LinearLayoutManager(this)
+        categoryAdapter = HomeCategoryAdapter(emptyList<Category>().toMutableList())
+        categoryRecyclerView.adapter = categoryAdapter
+
+
+        loadReviewCategories()
     }
 
-        public fun next(v: View) {
-            val intent = Intent(this, Card::class.java)
-            startActivity(intent)
-        }
 
-        public fun gotoStats(v: View) {
-            val newColor = ContextCompat.getColor(this, R.color.pur)
-            val intent = Intent(this, Stats::class.java)
-            val options = ActivityOptions.makeCustomAnimation(this, R.anim.slide_in_right, R.anim.slide_out_left)
-            startActivity(intent, options.toBundle())
+    private fun loadReviewCategories(){
+        // Load the categories from the database
+        lifecycleScope.launch() {
+            database.categoryDao.getAllCategories().collect { categories ->
+                categoryAdapter.categories = categories as MutableList<Category>
+                categoryAdapter.notifyDataSetChanged()
+            }
         }
+    }
 
-        public fun addCard(v: View) {
-            val intent = Intent(this, addCard::class.java)
-            startActivity(intent)
-        }
 
+
+    public fun gotoStats(v: View) {
+        val newColor = ContextCompat.getColor(this, R.color.pur)
+        val intent = Intent(this, Stats::class.java)
+        val options = ActivityOptions.makeCustomAnimation(this, R.anim.slide_in_right, R.anim.slide_out_left)
+        startActivity(intent, options.toBundle())
+    }
+
+    public fun addCard(v: View) {
+        val intent = Intent(this, CategoriesActivity::class.java)
+        startActivity(intent)
+    }
 }
-

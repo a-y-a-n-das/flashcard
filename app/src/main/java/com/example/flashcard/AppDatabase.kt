@@ -1,24 +1,34 @@
+package com.example.flashcard
+
+
+import android.content.Context
 import androidx.room.Database
+import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.flashcard.CategoryDao
-//import com.example.flashcard.Category
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
 
 
+@Database(entities = [Category::class, CardList::class], version = 3)
+@TypeConverters(Converters::class)
 
-
-
-@Entity(tableName = "categories")
-data class Category(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val name: String
-)
-
-@Database(entities = [Category::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun categoryDao(): CategoryDao
+    abstract val categoryDao: CategoryDao
+    abstract val cardDao: CardDao
+
+    companion object {
+        @Volatile
+        private var INSTANCE: AppDatabase? = null
+
+        fun getInstance(context: Context): AppDatabase {
+            return INSTANCE ?: synchronized(this) {
+                val instance = Room.databaseBuilder(
+                    context.applicationContext,
+                    AppDatabase::class.java,
+                    "App_db"
+                ).fallbackToDestructiveMigration().build()
+                INSTANCE = instance
+                instance
+            }
+        }
+    }
 }
-
-
-

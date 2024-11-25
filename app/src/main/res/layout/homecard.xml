@@ -8,17 +8,17 @@
     <!-- Dynamic TextView overlayed over the vector asset -->
 
     <ImageButton
-        android:id="@+id/nextButton"
+        android:id="@+id/startReview"
         android:layout_width="371dp"
         android:layout_height="123dp"
-        android:onClick="next"
         android:background="@drawable/c1"
+        android:contentDescription="Button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/titleText"
+        android:id="@+id/headingText"
         android:layout_width="254dp"
         android:layout_height="22dp"
         android:layout_marginBottom="48dp"
@@ -28,10 +28,10 @@
         android:textAlignment="viewStart"
         android:textColor="@android:color/white"
         android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@+id/nextButton"
-        app:layout_constraintEnd_toEndOf="@+id/nextButton"
+        app:layout_constraintBottom_toBottomOf="@+id/startReview"
+        app:layout_constraintEnd_toEndOf="@+id/startReview"
         app:layout_constraintHorizontal_bias="0.034"
-        app:layout_constraintStart_toStartOf="@+id/nextButton" />
+        app:layout_constraintStart_toStartOf="@+id/startReview" />
 
     <TextView
         android:id="@+id/categoryText"
@@ -44,10 +44,10 @@
         android:textAlignment="viewStart"
         android:textColor="@color/white"
         android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@+id/nextButton"
-        app:layout_constraintEnd_toEndOf="@+id/nextButton"
+        app:layout_constraintBottom_toBottomOf="@+id/startReview"
+        app:layout_constraintEnd_toEndOf="@+id/startReview"
         app:layout_constraintHorizontal_bias="0.034"
-        app:layout_constraintStart_toStartOf="@+id/nextButton" />
+        app:layout_constraintStart_toStartOf="@+id/startReview" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

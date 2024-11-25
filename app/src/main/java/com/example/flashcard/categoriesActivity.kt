@@ -1,87 +1,85 @@
 package com.example.flashcard
 
+import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import android.widget.EditText
-import com.example.flashcard.Category
-
-
-
+import androidx.lifecycle.lifecycleScope
+import kotlin.system.exitProcess
 
 class CategoriesActivity : AppCompatActivity() {
-
-    private lateinit var categoryDao: CategoryDao
-    private lateinit var database: AppDatabase
-    private lateinit var categoryAdapter: CategoryAdapter
-    private lateinit var categoryRecyclerView: RecyclerView
-    private val categories = mutableListOf<Category>()
+    lateinit var database: AppDatabase
+    lateinit var categoryAdapter: CategoryAdapter
+    private lateinit var categories:List<Category>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_categories)
 
-        // Initialize Room database and DAO
-        database = Room.databaseBuilder(
-            applicationContext,
-            AppDatabase::class.java,
-            "flashcards-db"
-        ).build()
-        categoryDao = database.categoryDao()
+        database = AppDatabase.getInstance(this)
 
-        // Initialize RecyclerView
-        categoryRecyclerView = findViewById(R.id.categoryRecyclerView)
+        // Set up RecyclerView
+        val categoryRecyclerView = findViewById<RecyclerView>(R.id.categoryRecyclerView)
+        val backToHome : ImageButton = findViewById<ImageButton>(R.id.backToHome)
+
+        val categoryNameText = findViewById<EditText>(R.id.categoryNameText)
+        val submitCategoryName = findViewById<Button>(R.id.submitCategoryName)
+
         categoryRecyclerView.layoutManager = LinearLayoutManager(this)
-        categoryAdapter = CategoryAdapter(categories)
+
+        backToHome.setOnClickListener(){
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+        }
+
+
+        // Initialize adapter with an empty list
+        categoryAdapter = CategoryAdapter(mutableListOf()){ category ->
+            deleteCategory(category)
+        }
         categoryRecyclerView.adapter = categoryAdapter
 
-        // Load existing categories from the database
+        submitCategoryName.setOnClickListener {
+            lifecycleScope.launch() {
+                val categoryName = categoryNameText.text.toString()
+                val category = Category(categoryName = categoryName)
+                if(categoryName.isBlank()) {
+                    Toast.makeText(it.context, "Category name cannot be blank!", Toast.LENGTH_SHORT).show()
+                    return@launch
+                }
+                database.categoryDao.upsertCategory(category)
+                loadCategories()
+            }
+        }
+
+        // Load categories from the database
         loadCategories()
-
-        // Set up the "Add Category" button
-        val addButton: Button = findViewById(R.id.createCategoryButton) // Button to add a new category
-        addButton.setOnClickListener {
-            val categoryName = findViewById<EditText>(R.id.categoryEditText).text.toString()
-            if (categoryName.isNotEmpty()) {
-                // Add the new category to the database
-                addCategory(categoryName)
-            }
-        }
     }
 
-    // Add a new category to the database
-    private fun addCategory(categoryName: String) {
-        val newCategory = Category(name = categoryName)
 
-        // Run database operations in the background thread
-        CoroutineScope(Dispatchers.IO).launch {
-            categoryDao.insertCategory(newCategory)
-
-            // Update the UI on the main thread
-            withContext(Dispatchers.Main) {
-                categories.add(newCategory)  // Add the new category to the list
-                categoryAdapter.notifyItemInserted(categories.size - 1) // Notify RecyclerView of new item
-            }
-        }
-    }
-
-    // Load categories from Room database
+    // Function to load categories from the database
     private fun loadCategories() {
-        CoroutineScope(Dispatchers.IO).launch {
-            val categoriesFromDb = categoryDao.getAllCategories()
-            withContext(Dispatchers.Main) {
-                categories.clear()
-                categories.addAll(categoriesFromDb)
-                categoryAdapter.notifyDataSetChanged()
+        lifecycleScope.launch {
+            // Collect categories using Flow
+            database.categoryDao.getAllCategories().collect { categories ->
+                categoryAdapter.updateData(categories as MutableList<Category>)  // Update RecyclerView with new data
             }
         }
     }
-}
+
+    private fun deleteCategory(category: Category) {
+        lifecycleScope.launch {
+            database.categoryDao.deleteCategory(category) // Delete from database
+
+            loadCategories() // Reload categories
+        }
+    }
+    }

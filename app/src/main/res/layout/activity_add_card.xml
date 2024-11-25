@@ -9,7 +9,7 @@
     tools:context=".addCard">
 
     <ImageButton
-        android:id="@+id/back"
+        android:id="@+id/backToCards"
         android:layout_width="16dp"
         android:layout_height="32dp"
         android:layout_marginTop="30dp"
@@ -23,7 +23,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/title"
+        android:id="@+id/addCardsTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Add Cards in History"
@@ -33,7 +33,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.107"
-        app:layout_constraintStart_toEndOf="@+id/back"
+        app:layout_constraintStart_toEndOf="@+id/backToCards"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.034" />
 
@@ -49,11 +49,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.193"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title"
+        app:layout_constraintTop_toBottomOf="@+id/addCardsTitle"
         app:layout_constraintVertical_bias="0.0" />
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/question"
         android:layout_width="340dp"
         android:layout_height="290dp"
         android:background="@drawable/q_bg"
@@ -84,7 +84,7 @@
         app:layout_constraintVertical_bias="0.511" />
 
     <EditText
-        android:id="@+id/editText2"
+        android:id="@+id/answer"
         android:layout_width="340dp"
         android:layout_height="290dp"
         android:background="@drawable/a_bg"
@@ -101,6 +101,7 @@
         app:layout_constraintVertical_bias="0.833" />
 
     <Button
+        android:id="@+id/addCardButton"
         android:layout_width="178dp"
         android:layout_height="57dp"
         android:backgroundTint="@color/indigo"
@@ -113,7 +114,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText2"
+        app:layout_constraintTop_toBottomOf="@+id/answer"
         app:layout_constraintVertical_bias="0.255" />
 
 

@@ -14,7 +14,10 @@
         android:windowSoftInputMode="adjustResize"
         tools:targetApi="31">
         <activity
-            android:name=".categories"
+            android:name=".ViewCategory"
+            android:exported="false" />
+        <activity
+            android:name=".CategoriesActivity"
             android:exported="false" />
         <activity
             android:name=".addCard"
