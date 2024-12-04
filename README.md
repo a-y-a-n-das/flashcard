@@ -15,7 +15,7 @@ A simple flashcard application designed to help users study and memorize content
 
 1. Clone the repository to your local machine:
     ```bash
-    git clone https://github.com/yourusername/flashcard-app.git
+    git clone https://github.com/a-y-a-n-das/flashcard-app.git
     ```
 
 2. Open the project in Android Studio.
