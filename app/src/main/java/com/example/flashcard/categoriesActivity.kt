@@ -55,7 +55,7 @@ class CategoriesActivity : AppCompatActivity() {
                     Toast.makeText(it.context, "Category name cannot be blank!", Toast.LENGTH_SHORT).show()
                     return@launch
                 }
-                database.categoryDao.upsertCategory(category)
+                database.categoryDao().upsertCategory(category)
                 loadCategories()
             }
         }
@@ -69,7 +69,7 @@ class CategoriesActivity : AppCompatActivity() {
     private fun loadCategories() {
         lifecycleScope.launch {
             // Collect categories using Flow
-            database.categoryDao.getAllCategories().collect { categories ->
+            database.categoryDao().getAllCategories().collect { categories ->
                 categoryAdapter.updateData(categories as MutableList<Category>)  // Update RecyclerView with new data
             }
         }
@@ -77,7 +77,7 @@ class CategoriesActivity : AppCompatActivity() {
 
     private fun deleteCategory(category: Category) {
         lifecycleScope.launch {
-            database.categoryDao.deleteCategory(category) // Delete from database
+            database.categoryDao().deleteCategory(category) // Delete from database
 
             loadCategories() // Reload categories
         }

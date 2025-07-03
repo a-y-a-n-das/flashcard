@@ -12,7 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import android.widget.Toast
 import android.widget.TextView
-
+import java.time.LocalDate
 
 
 class addCard : AppCompatActivity() {
@@ -32,7 +32,7 @@ class addCard : AppCompatActivity() {
 
         lifecycleScope.launch {
             categoryId = intent.getIntExtra("categoryId", 0)
-            val category = database.categoryDao.getCategoryName(categoryId)
+            val category = database.categoryDao().getCategoryName(categoryId)
             addCardsTitle.text = "Add Cards to $category"
         }
 
@@ -44,13 +44,22 @@ class addCard : AppCompatActivity() {
             }
             val card = CardList(question = questionText, answer = answerText, categoryId = categoryId)
             lifecycleScope.launch() {
-                val exists = database.cardDao.isQuestionExists(card.question)
+                val exists = database.cardDao().isQuestionExists(card.question)
                 if (exists > 0) {
                     Toast.makeText(it.context, "Question already exists!", Toast.LENGTH_SHORT).show()
                     return@launch
                 }
-                database.cardDao.upsertCard(card)
+                database.cardDao().upsertCard(card)
+
+                val today = LocalDate.now()
+                database.countDao().updateCount(today = today, num = 1)
+
                 Toast.makeText(it.context, "Card added!", Toast.LENGTH_SHORT).show()
+
+                val count = database.countDao().getCount()
+
+                // Log the count value to verify it's correct
+                Log.e("count", count.toString())
             }
 
 
@@ -62,7 +71,7 @@ class addCard : AppCompatActivity() {
             val intent = Intent(this, ViewCategory::class.java)
 
             lifecycleScope.launch {
-                val category = database.categoryDao.getCategoryName(categoryId)
+                val category = database.categoryDao().getCategoryName(categoryId)
                 intent.putExtra("Category_name", category)
                 startActivity(intent)
             }

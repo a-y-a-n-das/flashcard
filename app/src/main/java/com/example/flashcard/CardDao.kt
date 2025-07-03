@@ -6,9 +6,21 @@ import androidx.room.Query
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 
 @Dao
 interface CardDao {
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertCards(cards: List<CardList>)
+
+    @Query("DELETE FROM cards")
+    suspend fun clearAll()
+
+    @Query("SELECT * FROM cards")
+    suspend fun getAllCards(): List<CardList>
+
 
     @Upsert
     suspend fun upsertCard(card: CardList)
@@ -39,30 +51,60 @@ interface CardDao {
                 "WHERE categoryId = :categoryId AND (" +
                 "score = 0 OR " +
                 "(score = 1 AND lastReviewDate < :today) OR " +
-                "(score = 2 AND lastReviewDate < :yesterday))"
+                "(score = 2 AND lastReviewDate < :yesterday) OR " +
+            "(score = 3 AND lastReviewDate < :dayDayBeforeYesterday))"
     )
+
+
     suspend fun getReviewCardsQuestionsByCategory(
         categoryId: Int,
         today: LocalDate,
-        yesterday: LocalDate
+        yesterday: LocalDate,
+        dayDayBeforeYesterday: LocalDate
     ): List<String>
 
     @Query("SELECT answer FROM cards " +
             "WHERE categoryId = :categoryId AND (" +
             "score = 0 OR " +
             "(score = 1 AND lastReviewDate < :today) OR " +
-            "(score = 2 AND lastReviewDate < :yesterday))"
+            "(score = 2 AND lastReviewDate < :yesterday) OR " +
+            "(score = 3 AND lastReviewDate < :dayDayBeforeYesterday))"
     )
     suspend fun getReviewCardsAnswersByCategory(
         categoryId: Int,
         today: LocalDate,
-        yesterday: LocalDate
+        yesterday: LocalDate,
+        dayDayBeforeYesterday: LocalDate
     ): List<String>
 
     @Query("SELECT cardId FROM cards WHERE question= :question")
     suspend fun getCardIdByQuestion(question: String): Int
 
-    @Query("UPDATE cards SET score = :score, lastReviewDate = :lastReviewDate WHERE cardId = :cardId")
+
+
+    @Query("UPDATE cards " +
+            "SET score = CASE " +
+            "WHEN score = 2 AND :score = 2 THEN 3 " +
+            "ELSE :score " +
+            "END, " +
+            "lastReviewDate = :lastReviewDate " +
+            "WHERE cardId = :cardId"
+        )
     suspend fun updateCardScoreAndDate(cardId: Int, score: Int, lastReviewDate: LocalDate)
+
+    @Query("SELECT COUNT(*) FROM cards WHERE categoryId = :categoryId")
+    suspend fun getTotalCardCount(categoryId: Int): Int
+
+    @Query("""
+    SELECT COUNT(*) FROM cards WHERE categoryId = :categoryId AND (
+        (score = 1 AND lastReviewDate >= :today) OR 
+        (score = 2 AND lastReviewDate >= :yesterday)
+    )
+""")
+    suspend fun getCardReviewedCount(
+        categoryId: Int,
+        today: LocalDate,
+        yesterday: LocalDate
+    ): Int
 
 }

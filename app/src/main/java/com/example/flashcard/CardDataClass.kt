@@ -23,3 +23,12 @@ data class CardList(
     var score : Int =0,
     var lastReviewDate: LocalDate = LocalDate.now()
 )
+
+@Entity(tableName = "count")
+@TypeConverters(Converters::class)// Optional: specify the table name explicitly
+data class Count(
+    var cards: Int = 0,
+    var date: LocalDate = LocalDate.now(),
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0
+)

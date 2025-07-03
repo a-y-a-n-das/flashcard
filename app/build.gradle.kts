@@ -2,7 +2,10 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("kotlin-kapt")
+    //id("com.android.application")
+    id("com.google.gms.google-services")
 }
+
 
 android {
     namespace = "com.example.flashcard"
@@ -37,16 +40,22 @@ android {
 }
 
 dependencies {
-
+    //implementation(platform("com.google.firebase:firebase-bom:33.16.0"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.storage)
+    implementation(libs.gson)
     androidTestImplementation(libs.androidx.espresso.core)
-    val roomVersion = "2.6.1"
+    val roomVersion = "2.7.2"
 
     implementation("androidx.room:room-runtime:$roomVersion")
 

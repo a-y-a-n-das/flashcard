@@ -23,7 +23,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
+<!--
     <EditText
         android:id="@+id/searchBar"
         android:layout_width="wrap_content"
@@ -40,7 +40,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/textView" />
-
+-->
 
 
     <ImageView
@@ -115,19 +115,27 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/reviewCardList"
-        android:layout_width="match_parent"
-        android:layout_height="465dp"
-        android:layout_marginBottom="80dp"
+        android:layout_width="417dp"
+        android:layout_height="454dp"
+        android:layout_marginBottom="88dp"
         android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="@+id/addCard"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <ImageButton
+        android:id="@+id/Backup"
+        android:layout_width="66dp"
+        android:layout_height="72dp"
+        android:layout_gravity="center"
+        android:background="@drawable/cloud"
+        android:contentDescription="Backup"
+        android:padding="12dp"
+        app:layout_constraintBottom_toTopOf="@+id/imageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.953"
         app:layout_constraintStart_toStartOf="parent" />
-
-
-
-
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>
 

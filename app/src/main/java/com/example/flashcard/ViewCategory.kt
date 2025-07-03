@@ -45,7 +45,7 @@ class ViewCategory : AppCompatActivity() {
         loadCards()
 
         lifecycleScope.launch() {
-            category_id = database.categoryDao.getCategoryId(category_name) ?: 0
+            category_id = database.categoryDao().getCategoryId(category_name) ?: 0
             if (category_id != null) {
             category_id = category_id
                Log.e("ViewCategory", "Category ID found for category name: $category_name & $category_id")
@@ -79,7 +79,7 @@ class ViewCategory : AppCompatActivity() {
         lifecycleScope.launch {
             // Collect categories using Flow
             Log.d("ViewCategory", "Category ID: $category_id")
-            database.cardDao.getCardsByCategory(category_id).collect { cards ->
+            database.cardDao().getCardsByCategory(category_id).collect { cards ->
                 Log.d("ViewCategory", "Fetched Cards: $cards")
                 cardAdapter.updateData(cards)
             }
@@ -89,9 +89,9 @@ class ViewCategory : AppCompatActivity() {
     private fun deleteCard(card: CardList){
         lifecycleScope.launch {
             // Delete card from the database
-            database.cardDao.deleteCard(card)
+            database.cardDao().deleteCard(card)
             // Update the adapter's list
-            val updatedCards = database.cardDao.getCardsByCategory(card.categoryId).first()
+            val updatedCards = database.cardDao().getCardsByCategory(card.categoryId).first()
             cardAdapter.updateData(updatedCards.toMutableList())
 
             Toast.makeText(this@ViewCategory, "Card deleted", Toast.LENGTH_SHORT).show()

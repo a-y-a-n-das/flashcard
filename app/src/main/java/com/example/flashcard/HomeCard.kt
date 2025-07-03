@@ -39,12 +39,12 @@ class HomeCategoryAdapter( var categories: MutableList<Category>) : RecyclerView
 
         adapterScope.launch {
             database = AppDatabase.getInstance(holder.itemView.context)
-            val id = database.categoryDao.getCategoryId(category_Name).toString().toInt()
+            val id = database.categoryDao().getCategoryId(category_Name).toString().toInt()
             val count = withContext(Dispatchers.IO)
             {
                 val today = LocalDate.now()
                 val yesterday = today.minusDays(1)
-                database.cardDao.getCardCount(id, today, yesterday)
+                database.cardDao().getCardCount(id, today, yesterday)
             }
             if (count == 0) {
                 // Postpone removal to avoid IndexOutOfBoundsException

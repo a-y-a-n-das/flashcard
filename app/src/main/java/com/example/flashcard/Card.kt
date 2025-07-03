@@ -53,11 +53,12 @@ class Card : AppCompatActivity() {
         lifecycleScope.launch {
             val today = LocalDate.now()
             val yesterday = today.minusDays(1)
+            val dayDayBeforeYesterday = yesterday.minusDays(2)
 
             try {
                 // Fetch categoryId asynchronously
                 val categoryId = withContext(Dispatchers.IO) {
-                    database.categoryDao.getCategoryId(category_name)?.toInt() ?: 0
+                    database.categoryDao().getCategoryId(category_name)?.toInt() ?: 0
                 }
 
                 if (categoryId == 0) {
@@ -67,11 +68,11 @@ class Card : AppCompatActivity() {
 
                 // Fetch flashcards and solutions concurrently
                 val flashCardsDeferred: Deferred<List<String>> = async(Dispatchers.IO) {
-                    database.cardDao.getReviewCardsQuestionsByCategory(categoryId, today, yesterday)
+                    database.cardDao().getReviewCardsQuestionsByCategory(categoryId, today, yesterday, dayDayBeforeYesterday)
                 }
 
                 val flashCardsSolutionsDeferred: Deferred<List<String>> = async(Dispatchers.IO) {
-                    database.cardDao.getReviewCardsAnswersByCategory(categoryId, today, yesterday)
+                    database.cardDao().getReviewCardsAnswersByCategory(categoryId, today, yesterday, dayDayBeforeYesterday)
                 }
 
                 // Await for both results
@@ -120,10 +121,10 @@ class Card : AppCompatActivity() {
     private fun updateCardScore(score: Int) {
         val cardName = flashCards[currentPosition].toString()
         lifecycleScope.launch(){
-        cardid = database.cardDao.getCardIdByQuestion(cardName).toString().toInt()
+        cardid = database.cardDao().getCardIdByQuestion(cardName).toString().toInt()
         val today = LocalDate.now()
         // Update the card in the database with the new score and last review date
-        database.cardDao.updateCardScoreAndDate(cardid, score, today)}
+        database.cardDao().updateCardScoreAndDate(cardid, score, today)}
     }
     public fun backHome(v: View) {
         val intent = Intent(this, MainActivity::class.java)

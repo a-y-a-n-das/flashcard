@@ -3,24 +3,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:elevation="4dp"
-    android:background="#ffffff"
-    android:padding="8dp">
+    android:background="@drawable/category_item_bg"
+    android:padding="9dp">
 
     <Button
         android:id="@+id/categoryTitle"
-        android:layout_width="301dp"
-        android:layout_height="51dp"
-        android:backgroundTint="@color/white"
+        android:layout_width="359dp"
+        android:layout_height="52dp"
+        android:background="@android:color/transparent"
         android:clickable="true"
         android:gravity="left"
         android:padding="5dp"
         android:text="Category Name"
-        android:textColor="@android:color/black"
+        android:textColor="@android:color/white"
         android:textSize="25sp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <ImageButton
         android:id="@+id/deleteCategory"
@@ -30,6 +32,8 @@
         android:contentDescription="trash"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.976"
+        app:layout_constraintStart_toStartOf="@+id/categoryTitle"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
