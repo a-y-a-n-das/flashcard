@@ -20,7 +20,7 @@
         <meta-data
             android:name="com.google.android.adaptive_icon"
             android:resource="@xml/adaptive_icon_config" />
-
+        <activity android:name=".SignInActivity"/>
         <activity
             android:name=".ViewCategory"
             android:exported="false" />

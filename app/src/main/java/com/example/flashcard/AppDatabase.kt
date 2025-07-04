@@ -8,7 +8,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
 
-@Database(entities = [Category::class, CardList::class, Count::class], version =10, exportSchema = false)
+@Database(entities = [Category::class, CardList::class, Count::class], version =12, exportSchema = false)
 @TypeConverters(Converters::class)
 
 abstract class AppDatabase : RoomDatabase() {

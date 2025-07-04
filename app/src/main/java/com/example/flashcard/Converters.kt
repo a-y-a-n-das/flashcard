@@ -14,7 +14,13 @@ class Converters {
     }
 
     @TypeConverter
-    fun toLocalDate(dateString: String?): LocalDate? {
-        return dateString?.let { LocalDate.parse(it, formatter) }
+    fun toLocalDate(dateString: String?): LocalDate {
+        return try {
+            dateString?.let { LocalDate.parse(it, formatter) } ?: LocalDate.now()
+        } catch (e: Exception) {
+            android.util.Log.e("Converters", "Invalid date string: $dateString", e)
+            LocalDate.now() // fallback to current date
+        }
     }
+
 }

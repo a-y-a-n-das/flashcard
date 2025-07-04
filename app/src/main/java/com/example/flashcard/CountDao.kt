@@ -15,28 +15,24 @@ interface CountDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCounts(counts: List<Count>)
 
-    @Query("DELETE FROM count")
-    suspend fun clearAll()
+    @Query("DELETE FROM count WHERE userId = :userId")
+    suspend fun clearAll(userId: String)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCount(count: Count)
 
-    @Query("SELECT cards FROM count WHERE id = 1")
-    suspend fun getCount(): Int?
+    @Query("SELECT cards FROM count WHERE userId = :userId ORDER BY date DESC LIMIT 1")
+    suspend fun getCount(userId: String): Int?
 
-    @Query("UPDATE count SET cards = CASE WHEN date = :today THEN cards + :num ELSE :num END, date = :today WHERE id = 1")
-    suspend fun updateCount(today: LocalDate, num: Int)
+    @Query("UPDATE count SET cards = CASE WHEN date = :today THEN cards + :num ELSE :num END, date = :today WHERE userId = :userId")
+    suspend fun updateCount(today: LocalDate, num: Int, userId: String)
 
-    // Rename this one internally to avoid conflict
-    @Query("INSERT INTO count (cards, date) VALUES (:num, :today)")
-    suspend fun insertCountRaw(num: Int, today: LocalDate)
+    // Room does not officially support INSERT via @Query (not portable), but you can keep it if it works in your version
+    @Query("INSERT INTO count (cards, date, userId) VALUES (:num, :today, :userId)")
+    suspend fun insertCountRaw(num: Int, today: LocalDate, userId: String)
 
-    // You can optionally wrap it here if needed:
-    suspend fun insertCount(num: Int, today: LocalDate, useRaw: Boolean = true) {
-        if (useRaw) {
-            insertCountRaw(num, today)
-        } else {
-            insertCount(Count(num, today))
-        }
+    // ADD THIS HELPER:
+    suspend fun insertCount(num: Int, today: LocalDate, userId: String) {
+        insertCount(Count(cards = num, date = today, userId = userId))
     }
 }

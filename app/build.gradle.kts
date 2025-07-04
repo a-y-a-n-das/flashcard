@@ -60,6 +60,10 @@ dependencies {
     implementation("androidx.room:room-runtime:$roomVersion")
 
     kapt("androidx.room:room-compiler:$roomVersion")
+    // Use kapt for annotation processing with Room
+    implementation(libs.glide)
+    kapt(libs.glide.compiler)
+
 
     // If this project only uses Java source, use the Java annotationProcessor
     // No additional plugins are necessary

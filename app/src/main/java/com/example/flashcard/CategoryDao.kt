@@ -12,14 +12,7 @@ import kotlinx.coroutines.flow.Flow
 interface CategoryDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertCategories(categories: List<Category>)
-
-    @Query("DELETE FROM categories")
-    suspend fun clearAll()
-
-    @Query("SELECT * FROM categories")
-    suspend fun getAllCategoriesForBackup(): List<Category>
-
+    suspend fun insertCategories(categories: List<Category>)  // Make sure categories already have userId set
 
     @Upsert
     suspend fun upsertCategory(category: Category)
@@ -27,15 +20,21 @@ interface CategoryDao {
     @Delete
     suspend fun deleteCategory(category: Category)
 
-    @Query("SELECT * FROM categories")
-    fun getAllCategories(): Flow<List<Category>>  // Changed to return Flow<List<Category>>
+    // ? Only return categories for the current user
+    @Query("SELECT * FROM categories WHERE userId = :userId")
+    fun getAllCategories(userId: String): Flow<List<Category>>
 
-    @Query("SELECT categoryId FROM categories WHERE categoryName = :categoryName")
-    suspend fun getCategoryId(categoryName: String): Int?
+    // ? For backup (all, including userId for each)
+    @Query("SELECT * FROM categories")
+    suspend fun getAllCategoriesForBackup(): List<Category>
+
+    @Query("DELETE FROM categories WHERE userId = :userId")
+    suspend fun clearAll(userId: String)
+
+    // ? Ensure matching user
+    @Query("SELECT categoryId FROM categories WHERE categoryName = :categoryName AND userId = :userId")
+    suspend fun getCategoryId(categoryName: String, userId: String): Int?
 
     @Query("SELECT categoryName FROM categories WHERE categoryId = :categoryId")
     suspend fun getCategoryName(categoryId: Int): String?
-
-  //  @Insert
-    //suspend fun insertAllCategories(categories: List<Category>)  // Insert a list of categories
 }

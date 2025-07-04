@@ -5,19 +5,17 @@ import androidx.appcompat.app.AppCompatActivity
 import android.content.Intent
 import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageButton
+import android.widget.*
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
-import android.widget.Toast
-import android.widget.TextView
 import java.time.LocalDate
 
-
 class addCard : AppCompatActivity() {
-    lateinit var database: AppDatabase
-    var categoryId: Int =0
+
+    private lateinit var database: AppDatabase
+    private var categoryId: Int = 0
+    private lateinit var currentUserId: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_card)
@@ -27,54 +25,62 @@ class addCard : AppCompatActivity() {
         val question = findViewById<EditText>(R.id.question)
         val answer = findViewById<EditText>(R.id.answer)
         val submit = findViewById<Button>(R.id.addCardButton)
+        val addCardsTitle: TextView = findViewById(R.id.addCardsTitle)
 
-        val addCardsTitle: TextView = findViewById<TextView>(R.id.addCardsTitle)
+        currentUserId = UserSession.getCurrentUserId(this) ?: ""
+        if (currentUserId.isEmpty()) {
+            Toast.makeText(this, "⚠️ User not signed in!", Toast.LENGTH_LONG).show()
+            finish()
+            return
+        }
 
+        categoryId = intent.getIntExtra("categoryId", 0)
         lifecycleScope.launch {
-            categoryId = intent.getIntExtra("categoryId", 0)
             val category = database.categoryDao().getCategoryName(categoryId)
-            addCardsTitle.text = "Add Cards to $category"
+            addCardsTitle.text = "Add Cards to ${category ?: "Unknown"}"
         }
 
-        submit.setOnClickListener(){
-            val questionText = question.text.toString()
-            val answerText = answer.text.toString()
-            if (question == null || answer == null || submit == null) {
-                Log.e("Views", "Some views are not initialized.")
-            }
-            val card = CardList(question = questionText, answer = answerText, categoryId = categoryId)
-            lifecycleScope.launch() {
-                val exists = database.cardDao().isQuestionExists(card.question)
-                if (exists > 0) {
-                    Toast.makeText(it.context, "Question already exists!", Toast.LENGTH_SHORT).show()
-                    return@launch
-                }
-                database.cardDao().upsertCard(card)
+        submit.setOnClickListener {
+            val questionText = question.text.toString().trim()
+            val answerText = answer.text.toString().trim()
 
-                val today = LocalDate.now()
-                database.countDao().updateCount(today = today, num = 1)
-
-                Toast.makeText(it.context, "Card added!", Toast.LENGTH_SHORT).show()
-
-                val count = database.countDao().getCount()
-
-                // Log the count value to verify it's correct
-                Log.e("count", count.toString())
+            if (questionText.isBlank() || answerText.isBlank()) {
+                Toast.makeText(this, "❗ Question and Answer can't be empty.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
 
-
-        }
-
-
-    }
-        public fun bHome(v: View) {
-            val intent = Intent(this, ViewCategory::class.java)
+            val card = CardList(
+                question = questionText,
+                answer = answerText,
+                categoryId = categoryId,
+                userId = currentUserId,
+                lastReviewDate = LocalDate.now() // ✅ Correct usage
+            )
 
             lifecycleScope.launch {
-                val category = database.categoryDao().getCategoryName(categoryId)
-                intent.putExtra("Category_name", category)
-                startActivity(intent)
+                val exists = database.cardDao().isQuestionExists(card.question, currentUserId)
+                if (exists > 0) {
+                    Toast.makeText(this@addCard, "⚠️ Question already exists!", Toast.LENGTH_SHORT).show()
+                    return@launch
+                }
+
+                database.cardDao().upsertCard(card)
+                database.countDao().updateCount(today = LocalDate.now(), num = 1, userId = currentUserId)
+
+                Toast.makeText(this@addCard, "✅ Card added!", Toast.LENGTH_SHORT).show()
+                val count = database.countDao().getCount(currentUserId)
+                Log.d("CardCount", count.toString())
             }
         }
+    }
 
+    fun bHome(v: View) {
+        val intent = Intent(this, ViewCategory::class.java)
+        lifecycleScope.launch {
+            val category = database.categoryDao().getCategoryName(categoryId)
+            intent.putExtra("Category_name", category ?: "")
+            startActivity(intent)
+            finish()
+        }
+    }
 }

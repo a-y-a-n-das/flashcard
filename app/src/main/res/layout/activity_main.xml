@@ -125,7 +125,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
-    <ImageButton
+    <!--
+<ImageButton
         android:id="@+id/Backup"
         android:layout_width="66dp"
         android:layout_height="72dp"
@@ -137,5 +138,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.953"
         app:layout_constraintStart_toStartOf="parent" />
+-->
 </androidx.constraintlayout.widget.ConstraintLayout>
 
